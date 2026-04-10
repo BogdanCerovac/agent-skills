@@ -57,8 +57,8 @@ Quick reference for WCAG 2.1 AA compliance. Use alongside the `frontend-ui-engin
 ### Buttons vs. Links
 
 ```html
-<!-- Use <button> for actions -->
-<button onClick={handleDelete}>Delete Task</button>
+<!-- Use <button> for actions, type="submit" for submits, otherwise type="button" -->
+<button type="button" onClick={handleDelete}>Delete Task</button>
 
 <!-- Use <a> for navigation -->
 <a href="/tasks/123">View Task</a>
