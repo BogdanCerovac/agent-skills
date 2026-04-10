@@ -162,7 +162,7 @@ Don't skip heading levels. Don't use heading styles for non-heading content.
 - Ensure sufficient contrast (4.5:1 for normal text, 3:1 for large text)
 - Don't rely solely on color to convey information (use icons, text, or patterns too)
 
-## Accessibility (WCAG 2.1 AA)
+## Accessibility (WCAG 2.2 AA)
 
 Every component must meet these standards:
 
@@ -172,7 +172,7 @@ Every component must meet these standards:
 // Every interactive element must be keyboard accessible
 <button onClick={handleClick}>Click me</button>        // ✓ Focusable by default
 <div onClick={handleClick}>Click me</div>               // ✗ Not focusable
-<div role="button" tabIndex={0} onClick={handleClick}    // ✓ But prefer <button>
+<div role="button" tabIndex={0} onClick={handleClick}    // ✓ Avoid and prefer <button>
      onKeyDown={e => e.key === 'Enter' && handleClick()}>
   Click me
 </div>
@@ -181,20 +181,24 @@ Every component must meet these standards:
 ### ARIA Labels
 
 ```tsx
-// Label interactive elements that lack visible text
-<button aria-label="Close dialog"><XIcon /></button>
+// Label interactive elements that lack visible text - best to use sr-only text, as it is more robust for translations
+<button><XIcon aria-hidden="true" /><span className="sr-only">Close dialog</span></button>
 
 // Label form inputs
 <label htmlFor="email">Email</label>
 <input id="email" type="email" />
 
-// Or use aria-label when no visible label exists
-<input aria-label="Search tasks" type="search" />
+// Hidden name (when visible label is not wanted but we have a region like search) - best practice for translations
+<section aria-labelledby="search-tasks-label">
+  <h2 className="sr-only" id="search-tasks-label">Search tasks</h2>
+  <input type="search" aria-labelledby="search-tasks-label" />
+</section>
 ```
 
 ### Focus Management
 
 ```tsx
+// Trap focus inside dialog when open
 // Move focus when content changes
 function Dialog({ isOpen, onClose }: DialogProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -206,7 +210,7 @@ function Dialog({ isOpen, onClose }: DialogProps) {
   // Trap focus inside dialog when open
   return (
     <dialog open={isOpen}>
-      <button ref={closeRef} onClick={onClose}>Close</button>
+      <button type="button" ref={closeRef} onClick={onClose}>Close</button>
       {/* dialog content */}
     </dialog>
   );
@@ -238,7 +242,7 @@ function TaskList({ tasks }: { tasks: Task[] }) {
 Design for mobile first, then expand:
 
 ```tsx
-// Tailwind: mobile-first responsive
+// If using Tailwind: mobile-first responsive
 <div className="
   grid grid-cols-1      /* Mobile: single column */
   sm:grid-cols-2        /* Small: 2 columns */
