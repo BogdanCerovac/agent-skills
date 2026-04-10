@@ -70,40 +70,46 @@ Quick reference for WCAG 2.1 AA compliance. Use alongside the `frontend-ui-engin
 ### Form Labels
 
 ```html
-<!-- Explicit label association -->
+<!-- Explicit label association - best practice-->
 <label htmlFor="email">Email address</label>
 <input id="email" type="email" required />
 
-<!-- Implicit wrapping -->
+<!-- Implicit wrapping - causing issues with some assistive technologies, but tecnically correct - avoid -->
 <label>
   Email address
   <input type="email" required />
 </label>
 
-<!-- Hidden label (visible label preferred) -->
+<!-- Hidden name (when visible label is not wanted but we have a region like search) - best practice for translations -->
+<section aria-labelledby="search-tasks-label">
+  <h2 className="sr-only" id="search-tasks-label">Search tasks</h2>
+  <input type="search" aria-labelledby="search-tasks-label" />
+</section>
+
+<!-- Hidden label (visible label preferred) - avoid -->
 <input type="search" aria-label="Search tasks" />
 ```
 
 ### ARIA Roles
 
 ```html
-<!-- Navigation -->
+<!-- Navigation - use aria-label only if there are multiple, ideally aria-labelledby for best translation capabilities (like the search example) -->
 <nav aria-label="Main navigation">...</nav>
 <nav aria-label="Footer links">...</nav>
 
-<!-- Status messages -->
-<div role="status" aria-live="polite">Task saved</div>
+<!-- Status messages (implicit aria-live="polite") less urgent messages -->
+<div role="status">Task saved</div>
 
-<!-- Alert messages -->
+<!-- Alert messages (implicit aria-live="assertive") critical messages -->
 <div role="alert">Error: Title is required</div>
 
-<!-- Modal dialogs -->
+<!-- Modal dialogs are best when named -->
 <dialog aria-modal="true" aria-labelledby="dialog-title">
   <h2 id="dialog-title">Confirm Delete</h2>
   ...
 </dialog>
 
-<!-- Loading states -->
+<!-- Loading states  -->
 <div aria-busy="true" aria-label="Loading tasks">
   <Spinner />
 </div>
@@ -114,7 +120,7 @@ Quick reference for WCAG 2.1 AA compliance. Use alongside the `frontend-ui-engin
 ```html
 <ul role="list" aria-label="Tasks">
   <li>
-    <input type="checkbox" id="task-1" aria-label="Complete: Buy groceries" />
+    <input type="checkbox" id="task-1" />
     <label htmlFor="task-1">Buy groceries</label>
   </li>
 </ul>
@@ -135,9 +141,13 @@ npx pa11y             # CLI accessibility checker
 # macOS: VoiceOver (Cmd + F5)
 # Windows: NVDA (free) or JAWS
 # Linux: Orca
+# iPhone: VoiceOver
+# Android: TalkBack
 ```
 
 ## Quick Reference: ARIA Live Regions
+
+Live regions work best when present in DOM on load. If added dynamically they may fail.
 
 | Value | Behavior | Use For |
 |-------|----------|---------|
